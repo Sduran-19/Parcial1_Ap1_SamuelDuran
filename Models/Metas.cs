@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
+
 namespace Parcial1_Ap1_SamuelDuran.Models;
 
 public class Metas
@@ -6,10 +8,13 @@ public class Metas
 	[Key]
 	public int MetaId { get; set; }
 
-	[Required(ErrorMessage = "Error, debe ingresar una descripcion")]
+    [Required(ErrorMessage = "Error, debe ingresar una fecha")]
+    public DateTime Fecha { get; set; }
+
+    [Required(ErrorMessage = "Error, debe ingresar una descripcion")]
 	public string? Descripcion { get; set; }
 
-	[Required(ErrorMessage = "Error, debe ingresar un monto ")]
+    [Required(ErrorMessage = "Error, debe ingresar un monto ")]
 	public int? Monto { get; set; }
 
 }
