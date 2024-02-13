@@ -1,6 +1,5 @@
 ﻿@page "/DetailsMeta"
-@using Parcial1_Ap1_SamuelDuran.Services
-@using Parcial1_Ap1_SamuelDuran.Models
+
 @using System.Linq.Expressions
 @attribute [StreamRendering]
 @rendermode InteractiveServer
@@ -28,8 +27,10 @@
 					<tr>
 						<th>MetaId</th>
 						<th>Fecha</th>
-						<th>Descripcion</th>
+						<th>Descripci&oacute;n</th>
 						<th>Monto</th>
+						<th>Editar</th>
+						<th>Eliminar</th>
 
 
 					</tr>
@@ -42,6 +43,8 @@
 							<td>@met.Fecha</td>
 							<td>@met.Descripcion</td>
 							<td>@met.Monto</td>
+							<td><a href="/EditMetas/MetaId=@met.MetaId"><em><i class="bi bi-pencil-square" /></em></a></td>
+							<td><a href="/DeleteMetas/MetaId=@met.MetaId"><em><i class="bi bi-trash3-fill" /></em></a></td>
 
 						</tr>
 					}
