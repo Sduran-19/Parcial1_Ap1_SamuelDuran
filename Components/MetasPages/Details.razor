@@ -1,0 +1,73 @@
+﻿@page "/DetailsMeta"
+@using Parcial1_Ap1_SamuelDuran.Services
+@using Parcial1_Ap1_SamuelDuran.Models
+@using System.Linq.Expressions
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject MetasService MetasService;
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Detalles de Metas</PageTitle>
+	<div class="card shadow-lg">
+
+		<div class="card-header">
+			<h3><strong>Detalles de Metas</strong></h3>
+			
+		</div>
+
+		<div class="card-body">
+			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4"></div>
+		@if (MetasList.Count == 0)
+		{
+			<p><em>Agregue un nueva Meta...</em></p>
+		}
+		else
+		{
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>MetaId</th>
+						<th>Fecha</th>
+						<th>Descripcion</th>
+						<th>Monto</th>
+
+
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var met in MetasList)
+					{
+						<tr>
+							<td>@met.MetaId</td>
+							<td>@met.Fecha</td>
+							<td>@met.Descripcion</td>
+							<td>@met.Monto</td>
+
+						</tr>
+					}
+					</tbody>
+				</table>
+			}
+		</div>
+
+		<div class="card-footer">
+		<button type="button" class="btn btn-outline-primary" @onclick="VolverAInicio">Volver</button>
+		</div>
+	</div>
+
+@code {
+	public Metas Meta { get; set; } = new Metas();
+	public List<Metas> MetasList = new List<Metas>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		Expression<Func<Metas, bool>> criterio = Meta => Meta.MetaId > 0;
+		MetasList = await MetasService.Listar(criterio);
+	}
+
+	void VolverAInicio()
+	{
+		NavigationManager.NavigateTo("/Metas");
+	}
+}

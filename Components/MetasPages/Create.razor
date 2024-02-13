@@ -1,0 +1,118 @@
+﻿@page "/CreateMetas"
+@using Parcial1_Ap1_SamuelDuran.Models
+@using Parcial1_Ap1_SamuelDuran.Services
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject NavigationManager NavigationManager;
+@inject MetasService MetasService;
+
+<PageTitle>Crear Nueva Meta</PageTitle>
+<EditForm Model="Meta" OnValidSubmit="Crear">
+	<DataAnnotationsValidator />
+		<div class="card shadow-lg">
+			<div class="card-header">
+				<h3><strong>Crear Nueva Meta</strong></h3>
+			</div>
+			<div class="card-body">
+				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4"></div>
+				@*ID*@
+				<div class="mb-3">
+					<div class="col-4">
+					<label class="row" for="MetaId"><strong>MetaId:</strong></label>
+						<InputNumber id="MetaId" class="form-control" @bind-Value="Meta.MetaId"></InputNumber>
+					</div>
+				</div>
+				<div class="mb-3">
+					<div class="col-4">
+					@*Fecha*@
+					<label class="row" for="entradaFecha"><strong>Fecha:</strong></label>
+					<InputDate id="entradaFecha" class="form-control" @bind-Value="Meta.Fecha"></InputDate>
+					<ValidationMessage For="@(() => Meta.Fecha)"></ValidationMessage>
+					</div>
+				</div>
+				<div class="mb-3">
+					<div class="col-4">
+						@*Descripcion*@
+						<label class="row" for="Descripcion"><strong>Descripci&oacute;n:</strong></label>
+						<InputText id="Descripcon" class="form-control" @bind-Value="Meta.Descripcion"></InputText>
+					<ValidationMessage For="@(() => Meta.Descripcion)"></ValidationMessage>
+					</div>
+				</div>
+
+			<div class="mb-3">
+				<div class="col-4">
+					@*Monto*@
+					<label class="row" for="Monto"><strong>Monto:</strong></label>
+					<InputNumber id="Monto" class="form-control" @bind-Value="Meta.Monto"></InputNumber>
+					<ValidationMessage For="@(() => Meta.Monto)"></ValidationMessage>
+				</div>
+			</div>
+				<div class="mb-3">
+					
+				</div>
+				<div class="mb-3"></div>
+			</div>
+			<div class="card-footer d-flex justify-content-center">
+				<div class="px-2">
+					<button type="button" class="btn btn-outline-primary" @onclick="VolverAInicio">Volver</button>
+				</div>
+				<button type="submit" class="btn btn-outline-success">
+					<i class="bi bi-floppy-fill" /> Crear
+				</button>
+			</div>
+		</div>
+	@mensaje
+</EditForm>
+
+@code {
+	public Metas Meta { get; set; } = new Metas();
+	public string mensaje { get; set; } = string.Empty;
+
+	public async Task Crear()
+	{
+		if (await Validar())
+			return;
+		else
+		{
+			var crear = await MetasService.Crear(Meta);
+			if (crear)
+			{
+				mensaje = "La Meta se ha creado con exito";
+				await Task.Delay(2000);
+				LimpiarPantalla();
+			}
+			else
+				mensaje = "No se pudo crear la Meta correctamente";
+		}
+
+	}
+
+	public void LimpiarPantalla()
+	{
+		Meta = new Metas();
+		mensaje = string.Empty;
+	}
+
+	public async Task<bool> Validar()
+	{
+		var Fecha = await MetasService.BuscarFecha(Meta.Fecha);
+		var Monto = await MetasService.BuscarMeta(Meta.MetaId);
+		if (Fecha != null)
+		{
+			mensaje = "Error, ya existe una meta con esta fecha";
+			return true;
+		}
+		if (Monto != null)
+		{
+			mensaje = "Error, ya existe una meta con este monto";
+			return true;
+		}
+
+		return false;
+	}
+
+	void VolverAInicio()
+	{
+		NavigationManager.NavigateTo("/Metas");
+	}
+}

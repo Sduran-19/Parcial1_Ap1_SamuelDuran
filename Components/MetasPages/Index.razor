@@ -1,0 +1,85 @@
+﻿@page "/Metas"
+@using System.Linq.Expressions
+@using Parcial1_Ap1_SamuelDuran.Models
+@using Parcial1_Ap1_SamuelDuran.Services
+@inject MetasService MetasService;
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Metas</PageTitle>
+	<div class="card shadow-lg">
+
+		<div class="card-header">
+			<h3><strong>Metas</strong></h3>
+			
+		</div>
+
+		<div class="card-body">
+		@if (Meta.Count == 0)
+			{
+				<p><em>Agregue un nueva Meta...</em></p>
+			}
+			else
+			{
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>MetaId</th>
+							<th>Fecha</th>
+							<th>Descripcion</th>
+							<th>Monto</th>
+							
+							
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var met in Meta)
+						{
+							<tr>
+								<td>@met.MetaId</td>
+								<td>@met.Fecha</td>
+								<td>@met.Descripcion</td>
+								<td>@met.Monto</td>
+								
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+		<div class="mb-3"></div>
+
+		<div class="card-footer">
+
+		 <div class="d-flex align-items-start">
+			<div class="px-2">
+				<button type="button" class="btn btn-outline-primary" @onclick="IrACrear">Crear</button>
+			</div>
+		 	<button type="button" class="btn btn-outline-primary" @onclick="IrADetalles">Detalles</button>
+		 </div>
+		</div>
+	</div>
+	<div class="card-footer d-flex justify-content-center"></div>
+
+@code {
+	public List<Metas> Meta = new List<Metas>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		Expression<Func<Metas, bool>> criterio = Meta => Meta.MetaId > 0;
+
+		Meta = await MetasService.Listar(criterio);
+	}
+
+	void IrACrear()
+	{
+		NavigationManager.NavigateTo("/CreateMetas");
+	}
+
+	void IrADetalles()
+	{
+		NavigationManager.NavigateTo("/DetailsMeta");
+	}
+}

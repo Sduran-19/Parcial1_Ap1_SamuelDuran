@@ -1,0 +1,117 @@
+﻿@page "/EditMetas"
+@page "/EditMetas/MetaId={MetaId:int}"
+@using Parcial1_Ap1_SamuelDuran.Services
+@using Parcial1_Ap1_SamuelDuran.Models
+@rendermode InteractiveServer
+@inject MetasService MetasService;
+@inject NavigationManager NavigationManager;
+
+<PageTitle>Editar Meta</PageTitle>
+<EditForm Model="Meta" OnValidSubmit="Modificar" FormName="formularioMetas">
+	<DataAnnotationsValidator />
+		<div class="card shadow-lg">
+				@*ID*@
+				<div class="mb-3">
+					<div class="col-4">
+					<label class="row" for="MetaId"><strong>MetaId:</strong></label>
+						<InputNumber id="MetaId" class="form-control" @bind-Value="Meta.MetaId"></InputNumber>
+					</div>
+				</div>
+				<div class="mb-3">
+					<div class="col-4">
+						@*Fecha*@
+						<label class="row" for="entradaFecha"><strong>Fecha:</strong></label>
+					<InputDate id="entradaFecha" class="form-control" @bind-Value="Meta.Fecha"></InputDate>
+						<ValidationMessage For="@(() => Meta.Fecha)"></ValidationMessage>
+					</div>
+				</div>
+				<div class="mb-3">
+			<div class="col-4">
+				@*Descripcion*@
+				<label class="row" for="Descripcion"><strong>Descripci&oacute;n:</strong></label>
+				<InputText id="Descripcon" class="form-control" @bind-Value="Meta.Descripcion"></InputText>
+				<ValidationMessage For="@(() => Meta.Descripcion)"></ValidationMessage>
+			</div>
+				</div>
+
+			<div class="mb-3">
+				<div class="col-4">
+					@*Monto*@
+					<label class="row" for="Monto"><strong>Monto:</strong></label>
+					<InputNumber id="Monto" class="form-control" @bind-Value="Meta.Monto"></InputNumber>
+					<ValidationMessage For="@(() => Meta.Monto)"></ValidationMessage>
+				</div>
+			</div>
+				
+
+				<div class="mb-3"></div>
+			</div>
+			<div class="card-footer d-flex justify-content-center">
+				@*Boton*@
+				<div class="px-2">
+					<button type="button" class="btn btn-outline-primary" @onclick="IrAPaginaDestino">Volver</button>
+				</div>
+				<button type="submit" class="btn btn-outline-success">
+					<i class="bi bi-floppy-fill" /> Modificar
+				</button>
+			</div>
+	 
+	@*Mensaje*@
+	@mensaje
+</EditForm>
+
+@code {
+	[Parameter]
+	public int MetaId { get; set; }
+	public Metas Meta { get; set; } = new Metas();
+	public string mensaje { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		if (MetaId > 0)
+			Meta = await MetasService.BuscarId(MetaId);
+	}
+
+	public async Task Modificar()
+	{
+		if (await Validar())
+			return;
+		else
+		{
+			var modificar = await MetasService.Crear(Meta);
+			if (modificar)
+			{
+				mensaje = "Ls meta se ha modificado con exito";
+				await Task.Delay(2000);
+				IrAPaginaDestino();
+			}
+			else
+				mensaje = "No se pudo modificar la meta correctamente";
+		}
+	}
+
+	void IrAPaginaDestino()
+	{
+		NavigationManager.NavigateTo("/DetailsMeta");
+	}
+
+	public async Task<bool> Validar()
+	{
+		var Fecha = await MetasService.BuscarFecha(Meta.Fecha);
+		var Monto = await MetasService.BuscarMeta(Meta.MetaId);
+		if (Fecha != null)
+		{
+			mensaje = "Error, ya existe una meta con esta fecha";
+			return true;
+		}
+		if (Monto != null)
+		{
+			mensaje = "Error, ya existe una meta con este monto";
+			return true;
+		}
+
+		return false;
+	}
+}
+
