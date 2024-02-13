@@ -55,7 +55,7 @@ public class MetasService
 	{
 		return await _context.Metas
 			.AsNoTracking()
-			.FirstOrDefaultAsync(c => c.MetaId.ToLower() == MetaId.ToLower());
+			.FirstOrDefaultAsync(c => c.MetaId.ToString() == MetaId.ToString());
 	}
 
 	public async Task<Metas?> BuscarId(int MetaId)
