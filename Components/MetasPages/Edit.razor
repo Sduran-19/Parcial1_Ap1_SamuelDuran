@@ -8,6 +8,8 @@
 <EditForm Model="Meta" OnValidSubmit="Modificar" FormName="formularioMetas">
 	<DataAnnotationsValidator />
 		<div class="card shadow-lg">
+		 <div class="card-body">
+			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4"></div>
 				@*ID*@
 				<div class="mb-3">
 					<div class="col-4">
@@ -40,10 +42,14 @@
 					<ValidationMessage For="@(() => Meta.Monto)"></ValidationMessage>
 				</div>
 			</div>
-				
-
+			<div class="mb-3">
+					
+				</div>
 				<div class="mb-3"></div>
-			</div>
+
+
+		</div>	<div class="mb-3"></div>
+		</div>
 			<div class="card-footer d-flex justify-content-center">
 				@*Boton*@
 				<div class="px-2">
@@ -80,7 +86,7 @@
 			var modificar = await MetasService.Crear(Meta);
 			if (modificar)
 			{
-				mensaje = "Ls meta se ha modificado con exito";
+				mensaje = "La meta se ha modificado con exito";
 				await Task.Delay(2000);
 				IrAPaginaDestino();
 			}
@@ -91,23 +97,13 @@
 
 	void IrAPaginaDestino()
 	{
-		NavigationManager.NavigateTo("/DetailsMeta");
+		NavigationManager.NavigateTo("/Metas");
 	}
 
 	public async Task<bool> Validar()
 	{
-		var Fecha = await MetasService.BuscarFecha(Meta.Fecha);
-		var Monto = await MetasService.BuscarMeta(Meta.MetaId);
-		if (Fecha != null)
-		{
-			mensaje = "Error, ya existe una meta con esta fecha";
-			return true;
-		}
-		if (Monto != null)
-		{
-			mensaje = "Error, ya existe una meta con este monto";
-			return true;
-		}
+		
+		
 
 		return false;
 	}
