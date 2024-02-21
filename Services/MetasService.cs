@@ -65,11 +65,11 @@ public class MetasService
 			.FirstOrDefaultAsync(c => c.MetaId == MetaId);
 	}
 
-	public async Task<Metas?> BuscarFecha(DateTime Fecha)
+	public async Task<Metas?> BuscarDescripcion(string Descripcion)
 	{
 		return await _context.Metas
             .AsNoTracking()
-			.FirstOrDefaultAsync(c => c.Fecha == Fecha);
+			.FirstOrDefaultAsync(c => c.Descripcion == Descripcion);
 	}
 
 	public async Task<List<Metas>> Listar(Expression<Func<Metas, bool>> criterio)

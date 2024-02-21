@@ -93,18 +93,13 @@
 
 	public async Task<bool> Validar()
 	{
-		var Fecha = await MetasService.BuscarFecha(Meta.Fecha);
-		var Monto = await MetasService.BuscarMeta(Meta.MetaId);
-		if (Fecha != null)
+		var Descripcion = await MetasService.BuscarDescripcion(Meta.Descripcion);
+		if (Descripcion != null)
 		{
-			mensaje = "Error, ya existe una meta con esta fecha";
+			mensaje = "Error, ya existe una meta con esta Descripcion";
 			return true;
 		}
-		if (Monto != null)
-		{
-			mensaje = "Error, ya existe una meta con este monto";
-			return true;
-		}
+		
 
 		return false;
 	}
