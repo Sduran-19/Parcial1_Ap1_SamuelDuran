@@ -6,15 +6,59 @@
 @inject NavigationManager NavigationManager;
 
 <PageTitle>Metas</PageTitle>
-	<div class="card shadow-lg">
 
 		<div class="card-header">
 			<h3><strong>Metas</strong></h3>
 			
 		</div>
 
-		<div class="card-body">
-		@if (Meta.Count == 0)
+<div class="card-body">
+     <form>
+            <div class="input-group d-flex aling-items-end">
+                <InputSelect class="form-select col-2" @bind-Value="Opcion">
+                    <option value="1">Descripci&oacute;n</option>
+                    <option value="2">Fecha</option>
+                    <option value="3">Monto</option>
+                </InputSelect>
+
+
+	    <div class="flex-fill mx-2">
+		  <div class="input-group">
+			<label class="input-group-text">Busqueda</label>
+
+			<div class="col-auto">
+				@switch (Opcion)
+				{
+					case 1:
+						<div class="input-group">
+							<InputText @bind-Value="Meta.Descripcion" class="form-control"></InputText>
+							<button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
+						</div>
+						break;
+					case 2:
+						<div class="input-group">
+							<InputDate @bind-Value="FechaInicio" class="form-control"></InputDate>
+							<InputDate @bind-Value="FechaFin" class="form-control"></InputDate>
+							<button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
+						</div>
+						break;
+					case 3:
+						<div class="input-group">
+							<InputNumber @bind-Value="Meta.Monto" class="form-control"></InputNumber>
+							<button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
+						</div>
+						break;
+
+				}
+			</div>
+		  </div>
+	    </div>
+
+		</div>
+	</form>
+</div>
+
+		   @if (ListaMetas.Count == 0)
 			{
 				<p><em>Agregue un nueva Meta...</em></p>
 			}
@@ -34,8 +78,9 @@
 							
 						</tr>
 					</thead>
-					<tbody>
-						@foreach (var met in Meta)
+
+				<tbody>
+					  @foreach (var met in ListaMetas)
 						{
 							<tr>
 								<td>@met.MetaId</td>
@@ -51,30 +96,52 @@
 					</tbody>
 				</table>
 			}
-		</div>
-		<div class="mb-3"></div>
+        <div class="mb-3"></div>
 
 		<div class="card-footer">
 
 		 <div class="d-flex align-items-start">
 			<div class="px-2">
+
+				<label for="CantidaRegistro" class="col-form-label"><strong>Filas: @ListaMetas.Count</strong>&nbsp;</label>
+           
 				<button type="button" class="btn btn-outline-primary" @onclick="IrACrear">Crear</button>
 			</div>
 
 		 </div>
+
 		</div>
-	</div>
+
+
+
 	<div class="card-footer d-flex justify-content-center"></div>
 
 @code {
-	public List<Metas> Meta = new List<Metas>();
+	public List<Metas> ListaMetas = new List<Metas>();
+	public Metas Meta = new Metas();
+	public int Opcion { get; set; }
+
+	public DateTime FechaInicio { get; set; } = DateTime.Today;
+	public DateTime FechaFin { get; set; } = DateTime.Today;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await Task.Delay(500);
 		Expression<Func<Metas, bool>> criterio = Meta => Meta.MetaId > 0;
 
-		Meta = await MetasService.Listar(criterio);
+		ListaMetas = await MetasService.Listar(criterio);
+	}
+
+	public async Task Buscar()
+	{
+		if (Opcion == 1 && !string.IsNullOrEmpty(Meta.Descripcion))
+			ListaMetas = await MetasService.Listar(t => t.Descripcion!.ToLower().Contains(Meta.Descripcion.ToLower()));
+		else if (Opcion == 2 && FechaFin != default && FechaInicio != default)
+			ListaMetas = await MetasService.Listar(t => t.Fecha <= FechaFin && t.Fecha >= FechaInicio);
+		else if (Opcion == 3 && Meta.Monto > 0)
+			ListaMetas = await MetasService.Listar(a => a.Monto == Meta.Monto);
+		else
+			ListaMetas = await MetasService.Listar(t => true);
 	}
 
 	void IrACrear()

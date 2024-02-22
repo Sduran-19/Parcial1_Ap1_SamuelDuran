@@ -51,12 +51,6 @@ public class MetasService
 		return cantidad > 0;
 	}
 
-	public async Task<Metas?> BuscarMeta(int MetaId)
-	{
-		return await _context.Metas
-			.AsNoTracking()
-			.FirstOrDefaultAsync(c => c.MetaId.ToString() == MetaId.ToString());
-	}
 
 	public async Task<Metas?> BuscarId(int MetaId)
 	{
@@ -70,6 +64,13 @@ public class MetasService
 		return await _context.Metas
             .AsNoTracking()
 			.FirstOrDefaultAsync(c => c.Descripcion == Descripcion);
+	}
+
+	public async Task<Metas?> Buscar(int MetaId)
+	{
+		return await _context.Metas!
+			.AsNoTracking()
+			.FirstOrDefaultAsync(a => a.MetaId == MetaId);
 	}
 
 	public async Task<List<Metas>> Listar(Expression<Func<Metas, bool>> criterio)
